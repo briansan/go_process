@@ -4,7 +4,6 @@ package process
 import (
 	"os"
 	"os/exec"
-	"strings"
 	"sync"
 )
 
@@ -31,8 +30,7 @@ func Fork(processStateListener ProcessStateListener, cmdName string, cmdArgs ...
 	wg.Add(1)
 	go func() {
 		processMonitor := &ProcessMonitor{}
-		args := strings.Join(cmdArgs, " ")
-		command := exec.Command(cmdName, args)
+		command := exec.Command(cmdName, cmdArgs...)
 		output, err := command.CombinedOutput()
 		if err != nil {
 			processMonitor.Err = err
