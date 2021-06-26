@@ -33,7 +33,7 @@ func Fork(processStateListener ProcessStateListener, cmdName string, cmdArgs ...
 		processMonitor := &ProcessMonitor{}
 		args := strings.Join(cmdArgs, ",")
 		command := exec.Command(cmdName, args)
-		output, err := command.Output()
+		output, err := command.CombinedOutput()
 		if err != nil {
 			processMonitor.Err = err
 			processStateListener.OnError(processMonitor, err)
