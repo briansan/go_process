@@ -25,12 +25,19 @@ type ProcessStateListener interface {
 
 // Method to fork a process for given command
 // and return ProcessMonitor
-func Fork(processStateListener ProcessStateListener, cmdName string, cmdArgs ...string) *sync.WaitGroup {
+func Fork(processStateListener ProcessStateListener, cmdName string, cmdArgs ...string) (*ProcessMonitor, *sync.WaitGroup) {
+	processMonitor := &ProcessMonitor{
+		CmdName: &cmdName,
+		CmdArgs: &cmdArgs,
+	}
+
 	wg := new(sync.WaitGroup)
 	wg.Add(1)
 	go func() {
-		processMonitor := &ProcessMonitor{}
 		command := exec.Command(cmdName, cmdArgs...)
+		processMonitor.Process = command.Process
+		processMonitor.Cmd = command
+
 		output, err := command.CombinedOutput()
 		if err != nil {
 			processMonitor.Err = err
@@ -40,5 +47,5 @@ func Fork(processStateListener ProcessStateListener, cmdName string, cmdArgs ...
 		processStateListener.OnComplete(processMonitor)
 		wg.Done()
 	}()
-	return wg
+	return processMonitor, wg
 }
