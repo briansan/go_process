@@ -39,11 +39,11 @@ func Fork(processStateListener ProcessStateListener, cmdName string, cmdArgs ...
 		processMonitor.Cmd = command
 
 		output, err := command.CombinedOutput()
+		processMonitor.Output = &output
 		if err != nil {
 			processMonitor.Err = err
 			processStateListener.OnError(processMonitor, err)
 		}
-		processMonitor.Output = &output
 		processStateListener.OnComplete(processMonitor)
 		wg.Done()
 	}()
